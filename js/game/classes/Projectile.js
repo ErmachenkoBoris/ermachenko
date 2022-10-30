@@ -1,5 +1,5 @@
 export class Projectile {
-    constructor({ x, y, radious, color, ctx, velosity}, { draw, update }) {
+    constructor({ x, y, radious, color, ctx, velosity, speedScore}, { draw, update }) {
       this.x = x;
       this.y = y;
       this.radious = radious;
@@ -8,6 +8,7 @@ export class Projectile {
       this._drawInner = draw;
       this.velosity = velosity;
       this._update = update;
+      this.speedScore = speedScore || 1;
     }
   
     draw() {
@@ -29,8 +30,8 @@ export class Projectile {
         const angle = Math.atan2(event.clientY - startPosition.y,
             event.clientX - startPosition.x);
         this.velosity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle)
+            x: this.speedScore*Math.cos(angle),
+            y: this.speedScore*Math.sin(angle)
         }
     }
   }

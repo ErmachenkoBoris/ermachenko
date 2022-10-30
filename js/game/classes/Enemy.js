@@ -1,130 +1,181 @@
 export class Enemy {
-    constructor({ x, y, radious, color, ctx, velosity,  itemLink}, { draw, update }) {
-        this.x = x;
-        this.y = y;
-        this.radious = radious;
-        this.color = color;
-        this.ctx = ctx;
-        this.velosity = velosity;
-        this.area = itemLink.area;
+  constructor(
+    {
+      x,
+      y,
+      radious,
+      color,
+      ctx,
+      velosity,
+      itemLink,
+      speedScore,
+      RANDOM_DIRECTION_MODE = false,
+    },
+    { draw, update, collisionBorderBehavior }
+  ) {
+    this.x = x;
+    this.y = y;
+    this.radious = radious;
+    this.color = color;
+    this.ctx = ctx;
+    this.velosity = velosity;
+    this.area = itemLink.area;
+    this.speedScore = speedScore || 1;
+    this.text = itemLink.name;
+    this.style = itemLink.style || "bold 25px Arial";
+    this.image = this._setImage(itemLink.image);
+    this.neighBors = null;
+    this.RANDOM_DIRECTION_MODE = RANDOM_DIRECTION_MODE;
+    this.mass = radious * radious;
 
-        this._drawInner = draw;
-        this._updateInner = update;
+    this._drawInner = draw;
+    this._update = update;
+    this._interval = null;
 
-        this._generateRandomStartPositionInArea();
+    this._generateRandomStartPositionInArea();
+    this._setRandomAngle();
+    this._collisionBorderBehavior = collisionBorderBehavior;
+  }
 
-        this._interval = null;
-        this.text = itemLink.name;
-    }
+  _turnOnRandomDirectionalMode() {
+    this.RANDOM_DIRECTION_MODE = true;
+  }
 
-    _drawAreaField() {
-        this.ctx.beginPath();
-        this.ctx.fillStyle = this.color;
-        this.ctx.rect(this.area.x, this.area.y, this.area.width, this.area.height);
-        this.ctx.fillRect(
-            this.area.x,
-            this.area.y,
-            this.area.width,
-            this.area.height
-        );
-        this.ctx.fill();
-    }
+  _turnOffRandomDirectionalMode() {
+    this.RANDOM_DIRECTION_MODE = false;
+  }
 
-    draw() {
-        this.ctx.beginPath();
-        this.ctx.arc(this.x, this.y + 2* this.radious, this.radious, 0, Math.PI * 2, false);
+  setcollisionBorderBehavior(behaviorFunc) {
+    this._collisionBorderBehavior = behaviorFunc;
+  }
+
+  _runCollisionBorderBehavior() {
+    const {x, y, vxCoeff, vyCoeff} = this._collisionBorderBehavior(this, {
+      xMin: this.radious,
+      xMax: this.ctx.canvas.width - this.radious,
+      yMin: this.radious,
+      yMax: this.ctx.canvas.height - this.radious,
+    });
+    this.x = x;
+    this.y = y;
+    this._revertAngle(vxCoeff, vyCoeff);
+  }
+
+  _drawAreaField() {
+    this.ctx.beginPath();
+    this.ctx.fillStyle = this.color;
+    this.ctx.rect(this.area.x, this.area.y, this.area.width, this.area.height);
+    this.ctx.fillRect(
+      this.area.x,
+      this.area.y,
+      this.area.width,
+      this.area.height
+    );
+    this.ctx.fill();
+  }
+
+  draw() {
+    this.ctx.beginPath();
+    if(!this.image) {
+        this.ctx.arc(this.x, this.y, this.radious, 0, Math.PI * 2, false);
         this.ctx.fillStyle = this.color;
         this._addText();
-        this.ctx.fill();
+    } else {
+        this.ctx.drawImage(this.image, this.x-this.radious, this.y-this.radious, this.radious * 2, this.radious * 2)
     }
+    this.ctx.fill();
+  }
 
-    update() {
-        // this._drawAreaField();
-        if (!this._interval) {
-            this._setRandomInterval();
-            this._setRandomAngle();
-        }
-        this._updateInner(this);
-        this._checkIfInsideBodrdersAndCorrectPositin();
-        this.draw();
+  update() {
+    if (this.RANDOM_DIRECTION_MODE) {
+      this._addRandomModeBehavior();
     }
+    this._update(this);
+    this._runCollisionBorderBehavior();
+    this.draw();
+  }
 
-    setAngle(event, startPosition) {
-        const angle = Math.atan2(
-            event.clientY - startPosition.y,
-            event.clientX - startPosition.x
-        );
-        this.velosity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle),
-        };
+  _addRandomModeBehavior() {
+    if (!this._interval) {
+      this._setRandomInterval();
+      this._setRandomAngle();
     }
+  }
 
-    _getRandomColor() {
-        var letters = "0123456789ABCDEF";
-        var color = "#";
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
+  setAngle(event, startPosition) {
+    const angle = Math.atan2(
+      event.clientY - startPosition.y,
+      event.clientX - startPosition.x
+    );
+    this.velosity = {
+      x: this.speedScore * Math.cos(angle),
+      y: this.speedScore * Math.sin(angle),
+    };
+  }
 
-    _generateRandomStartPositionInArea() {
-        this.x = this._getRandomInt(this.area.x, this.area.x + this.area.width);
-        this.y = this._getRandomInt(this.area.y, this.area.y + this.area.height);
+  _getRandomColor() {
+    var letters = "0123456789ABCDEF";
+    var color = "#";
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
     }
+    return color;
+  }
 
-    _getRandomInt(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+  _generateRandomStartPositionInArea() {
+    this.x = this._getRandomInt(this.area.x, this.area.x + this.area.width);
+    this.y = this._getRandomInt(this.area.y, this.area.y + this.area.height);
+  }
 
-    _setRandomInterval() {
-        const randomTime = this._getRandomInt(1000, 2000);
-        this._interval = setInterval(() => {
-            clearInterval(this._interval);
-            this._interval = null;
-        }, randomTime);
-    }
+  _getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-    _setRandomAngle() {
-        const angle = Math.random() * Math.PI * 2;
-        this.velosity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle),
-        };
-    }
+  _setRandomInterval(startTime = 1200, endTime = 3000) {
+    const randomTime = this._getRandomInt(startTime, endTime);
+    this._interval = setInterval(() => {
+      clearInterval(this._interval);
+      this._interval = null;
+    }, randomTime);
+  }
 
-    _checkIfInsideBodrdersAndCorrectPositin() {
-        const BIAS = this.radious;
-        if (this.x - this.radious< this.area.x) {
-            this.x = this.area.x + BIAS;
-            this._revertAngle();
-        }
-        if (this.x - this.radious> this.area.x + this.area.width) {
-            this.x = this.area.x + this.area.width - BIAS;
-            this._revertAngle();
-        }
-        if (this.y - this.radious< this.area.y) {
-            this.y = this.area.y + BIAS;
-            this._revertAngle();
-        }
-        if (this.y - this.radious> this.area.y + this.area.height) {
-            this.y = this.area.y + this.area.height - BIAS;
-            this._revertAngle();
-        }
-    }
+  _setRandomAngle() {
+    const angle = Math.random() * Math.PI * 2;
+    this.velosity = {
+      x: this.speedScore * Math.cos(angle),
+      y: this.speedScore * Math.sin(angle),
+    };
+  }
 
-    _revertAngle() {
-        this.velosity = {
-            x: -this.velosity.x,
-            y: -this.velosity.y
-        };
+  _revertAngle(newXdirection = 1, newYdirection = 1) {
+    this.velosity = {
+      x: newXdirection * this.velosity.x,
+      y: newYdirection * this.velosity.y,
+    };
+    // TODO REFACTORE
+    if (this.RANDOM_DIRECTION_MODE && this._interval) {
+      clearInterval(this._interval);
+      this._setRandomInterval(100, 1000);
     }
+  }
 
-    _addText() {
-        this.ctx.font = "bold 16px Arial";
-        this.ctx.fillText(this.text, this.x-this.radious, this.y+this.radious/2);
+  _addText() {
+    this.ctx.font = this.style;
+    this.ctx.fillText(
+      this.text,
+      this.x - this.radious,
+      this.y + 1.2 * this.radious
+    );
+  }
+
+  _setImage(src) {
+    if (!src) {
+        return null;
     }
+    const tmpImage = new Image();
+    tmpImage.src = src;
+    return tmpImage;
+  }
 }
