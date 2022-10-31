@@ -24,7 +24,7 @@ const drawFunc = drowFunc;
 const xStart = canvas.width / 2;
 const yStart = canvas.height / 2;
 const player = new Player(
-    { x: xStart, y: yStart, radious: 30, color: "blue", ctx: ctx, permanent: true, },
+    { x: xStart, y: yStart, radious: 30, color: "blue", ctx: ctx, permanent: true, image: 'assets/img/blaster.png'},
     { draw: drawFunc, update: updateFunc, collisionBorderBehavior: checkIfInsideBodrdersAndCorrectPosition }
 );
 
@@ -51,7 +51,7 @@ function spawnEnemies() {
                         y: 1,
                     },
                     itemLink: item,
-                    speedScore: speedModes.generateSuperFast(),
+                    speedScore: speedModes.generateSlow(),
                 },
                 { draw: drawFunc, update: updateFunc, collisionBorderBehavior: checkIfInsideBodrdersAndCorrectPosition }
             )
@@ -67,35 +67,35 @@ setInterval(() => {
     }
 }, CLEAR_PROJECTILE_TIMER);
 
-let delay = false;
-let intervaleId;
+let timeOutId;
 window.addEventListener("mousemove", (event) => {
-    if (!delay) {
-        if (intervaleId) {
-            clearInterval(intervaleId);
-        }
-        delay = true;
-        intervaleId = setInterval(() => {
-            delay = false;
-            const projectile = new Projectile(
-                {
-                    x: player.x,
-                    y: player.y,
-                    radious: 5,
-                    color: "red",
-                    ctx: ctx,
-                    velosity: {
-                        x: 1,
-                        y: 1,
-                    },
-                    speedScore: 3
-                },
-                { draw: drawFunc, update: updateFunc }
-            );
-            projectile.setAngle(event, { x: player.x, y: player.y });
-            projectilesArr.push(projectile);
-        }, 200);
+    player.setRotateImageAngle(event);
+    if (timeOutId) {
+        clearTimeout(timeOutId);
     }
+    const updateProjectileAndPlayer = () => {
+        const projectile = new Projectile(
+            {
+                x: player.x,
+                y: player.y,
+                radious: 5,
+                color: "white",
+                ctx: ctx,
+                velosity: {
+                    x: 1,
+                    y: 1,
+                },
+                speedScore: 3
+            },
+            { draw: drawFunc, update: updateFunc }
+        );
+        projectile.setAngle(event, { x: player.x, y: player.y });
+        projectilesArr.push(projectile);
+        clearTimeout(timeOutId);
+        timeOutId = setTimeout(updateProjectileAndPlayer, 600)
+    }
+    timeOutId = setTimeout(updateProjectileAndPlayer, 100);
+
 });
 
 
@@ -103,7 +103,9 @@ function animate() {
     setTimeout(() => {
         allMassObjects = [...enemiesArr, player];
         requestAnimationFrame(animate);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         collisionBulletHepler.checkCollisionAndFix(enemiesArr, projectilesArr);
 

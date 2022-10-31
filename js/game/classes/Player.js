@@ -1,6 +1,6 @@
 export class Player {
   constructor(
-    { x, y, radious, color, ctx, velosity = { x: 1, y: 1 }, permanent = false},
+    { x, y, radious, color, ctx, velosity = { x: 1, y: 1 }, image, permanent = false},
     { draw, update, collisionBorderBehavior }
   ) {
     this.x = x;
@@ -14,6 +14,8 @@ export class Player {
     this._drawInner = draw;
     this._collisionBorderBehavior = collisionBorderBehavior;
     this._update = update;
+    this.image = this._setImage(image);
+    this._rotationImageAngle = Math.PI;
   }
 
   _runCollisionBorderBehavior() {
@@ -29,13 +31,36 @@ export class Player {
   }
 
   draw() {
-    this._drawInner({
-      ctx: this.ctx,
-      x: this.x,
-      y: this.y,
-      radious: this.radious,
-      color: this.color,
-    });
+    if(!this.image) {
+        this._drawInner({
+            ctx: this.ctx,
+            x: this.x,
+            y: this.y,
+            radious: this.radious,
+            color: this.color,
+          });
+    } else {
+        this.ctx.beginPath();
+        // this.ctx.drawImage(
+        //     this.image,
+        //     this.x - this.radious,
+        //     this.y - this.radious,
+        //     this.radious * 2,
+        //     this.radious * 2
+        //   );
+        this.ctx.save(); // save current state
+        this.ctx.translate(this.x, this.y); 
+        this.ctx.rotate(this._rotationImageAngle + Math.PI * 2); // rotate
+        this.ctx.drawImage(
+          this.image,
+          -this.radious,
+          -this.radious,
+          this.radious * 2,
+          this.radious * 2
+        );
+        this.ctx.restore(); // restore original states (no rotation etc)
+    }
+    this.ctx.fill();
   }
 
   update() {
@@ -51,5 +76,22 @@ export class Player {
       x: newXdirection * this.velosity.x,
       y: newYdirection * this.velosity.y,
     };
+  }
+
+  _setImage(src) {
+    if (!src) {
+      return null;
+    }
+    const tmpImage = new Image();
+    tmpImage.src = src;
+    console.log(tmpImage);
+    return tmpImage;
+  }
+
+  setRotateImageAngle(event) {
+    const angle = Math.atan2(event.clientY - this.y,
+        event.clientX - this.x);
+    this._rotationImageAngle = angle;
+    console.log(angle)
   }
 }

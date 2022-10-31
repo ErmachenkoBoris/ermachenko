@@ -1,8 +1,8 @@
 const getRandomInt = (min, max) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 export class Enemy {
   constructor(
@@ -20,9 +20,8 @@ export class Enemy {
     },
     { draw, update, collisionBorderBehavior }
   ) {
-    
-    this.x = x || (itemLink.area.x + itemLink.area.width / 2 - 1);
-    this.y = y || (itemLink.area.y + itemLink.area.height / 2 - 1);
+    this.x = x || itemLink.area.x + itemLink.area.width / 2 - 1;
+    this.y = y || itemLink.area.y + itemLink.area.height / 2 - 1;
 
     this.radious = radious;
     this.color = color;
@@ -36,11 +35,14 @@ export class Enemy {
     this.neighBors = null;
     this.RANDOM_DIRECTION_MODE = RANDOM_DIRECTION_MODE;
     this.mass = radious * radious;
-    this.health = health || 5;
+    this.baseHealth = 8;
+    this.health = health || this.baseHealth;
 
     this._drawInner = draw;
     this._update = update;
     this._interval = null;
+    this._healthColor = 'white';
+    this._healthBorder = 'red';
 
     this._generateRandomStartPositionInArea();
     this._setRandomAngle();
@@ -60,7 +62,7 @@ export class Enemy {
   }
 
   _runCollisionBorderBehavior() {
-    const {x, y, vxCoeff, vyCoeff} = this._collisionBorderBehavior(this, {
+    const { x, y, vxCoeff, vyCoeff } = this._collisionBorderBehavior(this, {
       xMin: this.radious,
       xMax: this.ctx.canvas.width - this.radious,
       yMin: this.radious,
@@ -86,13 +88,36 @@ export class Enemy {
 
   draw() {
     this.ctx.beginPath();
-    if(!this.image) {
-        this.ctx.arc(this.x, this.y, this.radious, 0, Math.PI * 2, false);
-        this.ctx.fillStyle = this.color;
-        this._addText();
+    if (!this.image) {
+      this.ctx.arc(this.x, this.y, this.radious, 0, Math.PI * 2, false);
+      this.ctx.fillStyle = this.color;
+      this._addText();
     } else {
-        this.ctx.drawImage(this.image, this.x-this.radious, this.y-this.radious, this.radious * 2, this.radious * 2)
+        this.drawCircleBehindImage();
+        this.ctx.beginPath();
+        this.ctx.drawImage(
+          this.image,
+          this.x - this.radious,
+          this.y - this.radious,
+          this.radious * 2,
+          this.radious * 2
+        );
     }
+    this.ctx.fill();
+  }
+
+  drawCircleBehindImage() {
+    this.ctx.beginPath();
+    this.ctx.arc(
+      this.x,
+      this.y,
+      this.radious + 5,
+      0,
+      Math.PI * 2 * (this.health / this.baseHealth),
+    );
+    this.ctx.fillStyle = this._healthColor;
+    // this.ctx.strokeStyle = this._healthBorder;
+    // this.ctx.stroke();
     this.ctx.fill();
   }
 
@@ -182,7 +207,7 @@ export class Enemy {
 
   _setImage(src) {
     if (!src) {
-        return null;
+      return null;
     }
     const tmpImage = new Image();
     tmpImage.src = src;
