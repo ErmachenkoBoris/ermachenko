@@ -14,14 +14,13 @@ import { CollisionBulletHepler } from "./classes/CollisionBulletHelper.js";
 import { GameObjectHandler } from "./classes/GameObjectsHandler.js";
 import getDeviceType from "./utils/getDeviceType.js";
 
-const FPS = 120;
+const FPS = 240;
 const MAX_PROJECTILE_LENGTH = 50;
 const CLEAR_PROJECTILE_TIMER = 5000;
 const canvas = document.querySelector("canvas");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 const DEVICE_TYPE = getDeviceType();
-console.log("DEVICE_TYPE", DEVICE_TYPE);
 
 const ctx = canvas.getContext("2d");
 const drawFunc = drowFunc;
@@ -35,7 +34,7 @@ const player = new Player(
     color: "blue",
     ctx: ctx,
     permanent: true,
-    image: "assets/img/blaster.png",
+    image: "assets/img/blaster-v2.svg",
   },
   {
     draw: drawFunc,
@@ -73,7 +72,7 @@ function spawnEnemies() {
           speedScore:
             DEVICE_TYPE == deviceTypes.mobile
               ? speedModes.generateMiddle()
-              : speedModes.generateSlow(),
+              : speedModes.generateFast(),
         },
         {
           draw: drawFunc,
@@ -97,7 +96,11 @@ setInterval(() => {
 }, CLEAR_PROJECTILE_TIMER);
 
 let timeOutId;
+let imageBackground = new Image()
+imageBackground.src = 'assets/img/space-background1.jpg'
+
 const hendlerType = DEVICE_TYPE == deviceTypes.mobile ? "pointerdown" : "mousemove";
+
 window.addEventListener(hendlerType, (event) => {
   player.setRotateImageAngle(event);
   if (timeOutId) {
@@ -132,8 +135,16 @@ function animate() {
     allMassObjects = [...enemiesArr, player];
     requestAnimationFrame(animate);
 
-    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(
+        imageBackground,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     collisionBulletHepler.checkCollisionAndFix(enemiesArr, projectilesArr);
 

@@ -6,7 +6,6 @@ const getRandomInt = (min, max) => {
 
 const radiousModes = {
     generateSmall: () => {
-        console.log('here');
         return getRandomInt(20, 40);
     },
     generateNormal: () => {

@@ -43,7 +43,7 @@ export class Player {
         this.ctx.beginPath();
         this.ctx.save(); // save current state
         this.ctx.translate(this.x, this.y); 
-        this.ctx.rotate(this._rotationImageAngle + Math.PI * 2); // rotate
+        this.ctx.rotate(this._rotationImageAngle + Math.PI / 2); // rotate
         this.ctx.drawImage(
           this.image,
           -this.radious,
