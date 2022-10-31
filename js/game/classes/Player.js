@@ -41,13 +41,6 @@ export class Player {
           });
     } else {
         this.ctx.beginPath();
-        // this.ctx.drawImage(
-        //     this.image,
-        //     this.x - this.radious,
-        //     this.y - this.radious,
-        //     this.radious * 2,
-        //     this.radious * 2
-        //   );
         this.ctx.save(); // save current state
         this.ctx.translate(this.x, this.y); 
         this.ctx.rotate(this._rotationImageAngle + Math.PI * 2); // rotate
@@ -84,7 +77,6 @@ export class Player {
     }
     const tmpImage = new Image();
     tmpImage.src = src;
-    console.log(tmpImage);
     return tmpImage;
   }
 
@@ -92,6 +84,5 @@ export class Player {
     const angle = Math.atan2(event.clientY - this.y,
         event.clientX - this.x);
     this._rotationImageAngle = angle;
-    console.log(angle)
   }
 }
