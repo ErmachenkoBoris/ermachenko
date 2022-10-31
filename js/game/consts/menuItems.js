@@ -21,7 +21,7 @@ const menuItems = [
         name: 'CV',
         color: 'blue',
         style: 'bold 10px Arial',
-        image: 'assets/img/game-cv.png'
+        image: 'assets/img/game-cv-svg.svg'
     },
 ];
 export default menuItems;
