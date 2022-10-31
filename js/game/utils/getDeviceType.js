@@ -1,3 +1,10 @@
+// TODO REFACTOR
+const deviceTypes = {
+    desktop: "desktop",
+    mobile: "mobile",
+    tablet: "tablet"
+}
+
 const getDeviceType = () => {
     const ua = navigator.userAgent;
     if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
@@ -12,5 +19,10 @@ const getDeviceType = () => {
     }
     return "desktop";
   };
+
+  export const isMobileOrTabler = () => {
+    const deviceType = getDeviceType()
+    return deviceType === deviceTypes.mobile || deviceType === deviceType.tablet
+  }
 
   export default getDeviceType;

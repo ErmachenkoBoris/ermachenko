@@ -9,18 +9,17 @@ import createAreas from "./utils/createAreas.js";
 import checkIfInsideBodrdersAndCorrectPosition from "./functions/collisionBordersHandler/collisionBordersHandler.js";
 import speedModes from "./consts/speedMods.js";
 import radiousModes from "./consts/radiousSizeMode.js";
-import deviceTypes from "./consts/deviceType.js";
 import { CollisionBulletHepler } from "./classes/CollisionBulletHelper.js";
 import { GameObjectHandler } from "./classes/GameObjectsHandler.js";
-import getDeviceType from "./utils/getDeviceType.js";
+import { isMobileOrTabler } from "./utils/getDeviceType.js";
 
-const FPS = 240;
+const FPS = 120;
+let isMobileOrTablerValue = isMobileOrTabler()
 const MAX_PROJECTILE_LENGTH = 50;
 const CLEAR_PROJECTILE_TIMER = 5000;
 const canvas = document.querySelector("canvas");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
-const DEVICE_TYPE = getDeviceType();
 
 const ctx = canvas.getContext("2d");
 const drawFunc = drowFunc;
@@ -30,8 +29,7 @@ const player = new Player(
   {
     x: xStart,
     y: yStart,
-    radious: 30,
-    color: "blue",
+    radious: isMobileOrTablerValue ? 15 : 30,
     ctx: ctx,
     permanent: true,
     image: "assets/img/blaster-v2.svg",
@@ -58,10 +56,9 @@ function spawnEnemies() {
     enemiesArr.push(
       new Enemy(
         {
-          radious:
-            DEVICE_TYPE == deviceTypes.mobile
-              ? radiousModes.generateSmall()
-              : radiousModes.generateBig(),
+          radious: isMobileOrTablerValue
+            ? radiousModes.generateSmall()
+            : radiousModes.generateBig(),
           color: item.color,
           ctx: ctx,
           velosity: {
@@ -69,10 +66,9 @@ function spawnEnemies() {
             y: 1,
           },
           itemLink: item,
-          speedScore:
-            DEVICE_TYPE == deviceTypes.mobile
-              ? speedModes.generateMiddle()
-              : speedModes.generateFast(),
+          speedScore: isMobileOrTablerValue
+            ? speedModes.generateMiddle()
+            : speedModes.generateFast(),
         },
         {
           draw: drawFunc,
@@ -96,10 +92,10 @@ setInterval(() => {
 }, CLEAR_PROJECTILE_TIMER);
 
 let timeOutId;
-let imageBackground = new Image()
-imageBackground.src = 'assets/img/space-background1.jpg'
+let imageBackground = new Image();
+imageBackground.src = "assets/img/space-background1.jpg";
 
-const hendlerType = DEVICE_TYPE == deviceTypes.mobile ? "pointerdown" : "mousemove";
+const hendlerType = isMobileOrTablerValue ? "pointerdown" : "mousemove";
 
 window.addEventListener(hendlerType, (event) => {
   player.setRotateImageAngle(event);
@@ -130,32 +126,35 @@ window.addEventListener(hendlerType, (event) => {
   timeOutId = setTimeout(updateProjectileAndPlayer, 100);
 });
 
+const animateFunctionBody = () => {
+  allMassObjects = [...enemiesArr, player];
+  requestAnimationFrame(animate);
+
+  ctx.drawImage(imageBackground, 0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  collisionBulletHepler.checkCollisionAndFix(enemiesArr, projectilesArr);
+
+  collisionHelper.checkCollisionAndFix(allMassObjects);
+
+  gameObjectHandler.update(projectilesArr);
+
+  gameObjectHandler.update(enemiesArr);
+
+  gameObjectHandler.update([player]);
+};
+
 function animate() {
-  setTimeout(() => {
-    allMassObjects = [...enemiesArr, player];
-    requestAnimationFrame(animate);
+  if (isMobileOrTablerValue) {
+    setTimeout(() => {
+      animateFunctionBody();
+    }, 1000 / FPS);
+    return;
+  }
 
-    ctx.drawImage(
-        imageBackground,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-
-      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    collisionBulletHepler.checkCollisionAndFix(enemiesArr, projectilesArr);
-
-    collisionHelper.checkCollisionAndFix(allMassObjects);
-
-    gameObjectHandler.update(projectilesArr);
-
-    gameObjectHandler.update(enemiesArr);
-
-    gameObjectHandler.update([player]);
-  }, 1000 / FPS);
+  animateFunctionBody();
 }
 
 animate();
