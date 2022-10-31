@@ -97,7 +97,7 @@ setInterval(() => {
 }, CLEAR_PROJECTILE_TIMER);
 
 let timeOutId;
-const hendlerType = DEVICE_TYPE == deviceTypes.mobile ? "click" : "mousemove";
+const hendlerType = DEVICE_TYPE == deviceTypes.mobile ? "pointerdown" : "mousemove";
 window.addEventListener(hendlerType, (event) => {
   player.setRotateImageAngle(event);
   if (timeOutId) {
