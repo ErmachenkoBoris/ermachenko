@@ -6,10 +6,11 @@ import drowFunc from "./functions/drawsFunctions/commonPlayerDrows.js";
 import updateFunc from "./functions/updateFunctions/commonUpdate.js";
 import menuItems from "./consts/menuItems.js";
 import createAreas from "./utils/createAreas.js";
-import getRandomInt from "./utils/getRandomInt.js";
 import checkIfInsideBodrdersAndCorrectPosition from "./functions/collisionBordersHandler/collisionBordersHandler.js"
 import speedModes from "./consts/speedMods.js"
 import radiousModes from "./consts/radiousSizeMode.js"
+import { CollisionBulletHepler } from "./classes/CollisionBulletHelper.js"
+import { GameObjectHandler } from "./classes/GameObjectsHandler.js";
 
 const FPS = 120;
 const MAX_PROJECTILE_LENGTH = 50;
@@ -22,15 +23,18 @@ const ctx = canvas.getContext("2d");
 const drawFunc = drowFunc;
 const xStart = canvas.width / 2;
 const yStart = canvas.height / 2;
-let projectilesArr = [];
-const enemiesArr = [];
 const player = new Player(
     { x: xStart, y: yStart, radious: 30, color: "blue", ctx: ctx, permanent: true, },
     { draw: drawFunc, update: updateFunc, collisionBorderBehavior: checkIfInsideBodrdersAndCorrectPosition }
 );
 
-const collisionHelper = new CollisionHepler();
+let projectilesArr = [];
 let allMassObjects = [];
+const enemiesArr = [];
+
+const collisionHelper = new CollisionHepler();
+const collisionBulletHepler = new CollisionBulletHepler();
+const gameObjectHandler = new GameObjectHandler();
 
 function spawnEnemies() {
     let itemsLocal = menuItems;
@@ -39,8 +43,6 @@ function spawnEnemies() {
         enemiesArr.push(
             new Enemy(
                 {
-                    x: xStart,
-                    y: yStart,
                     radious: radiousModes.generateBig(),
                     color: item.color,
                     ctx: ctx,
@@ -58,7 +60,6 @@ function spawnEnemies() {
 }
 
 spawnEnemies();
-allMassObjects = [...enemiesArr, player];
 
 setInterval(() => {
     if(projectilesArr.length > MAX_PROJECTILE_LENGTH) {
@@ -100,20 +101,19 @@ window.addEventListener("mousemove", (event) => {
 
 function animate() {
     setTimeout(() => {
+        allMassObjects = [...enemiesArr, player];
         requestAnimationFrame(animate);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for(let i = 0; i<allMassObjects.length-1; i++) {
-            for(let j = i+1; j<allMassObjects.length; j++) {
-                collisionHelper.checkCollision(allMassObjects[i], allMassObjects[j]);
-            } 
-        }
-        for (let projectile of projectilesArr) {
-            projectile.update();
-        }
-        for (let enemy of enemiesArr) {
-            enemy.update();
-        }
-        player.update();
+
+        collisionBulletHepler.checkCollisionAndFix(enemiesArr, projectilesArr);
+
+        collisionHelper.checkCollisionAndFix(allMassObjects);
+
+        gameObjectHandler.update(projectilesArr);
+
+        gameObjectHandler.update(enemiesArr);
+
+        gameObjectHandler.update([player]);
     }, 1000 / FPS);
 
 

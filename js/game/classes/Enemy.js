@@ -1,3 +1,9 @@
+const getRandomInt = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export class Enemy {
   constructor(
     {
@@ -9,12 +15,15 @@ export class Enemy {
       velosity,
       itemLink,
       speedScore,
+      health,
       RANDOM_DIRECTION_MODE = false,
     },
     { draw, update, collisionBorderBehavior }
   ) {
-    this.x = x;
-    this.y = y;
+    
+    this.x = x || (itemLink.area.x + itemLink.area.width / 2 - 1);
+    this.y = y || (itemLink.area.y + itemLink.area.height / 2 - 1);
+
     this.radious = radious;
     this.color = color;
     this.ctx = ctx;
@@ -27,6 +36,7 @@ export class Enemy {
     this.neighBors = null;
     this.RANDOM_DIRECTION_MODE = RANDOM_DIRECTION_MODE;
     this.mass = radious * radious;
+    this.health = health || 5;
 
     this._drawInner = draw;
     this._update = update;

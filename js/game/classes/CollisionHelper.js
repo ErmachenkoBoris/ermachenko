@@ -1,9 +1,21 @@
 export class CollisionHepler {
+    constructor() {
+        this.bias = 2;
+    }
+
     rotate(x, y, sin, cos, reverse) {
         return {
             x: (reverse) ? (x * cos + y * sin) : (x * cos - y * sin),
             y: (reverse) ? (y * cos - x * sin) : (y * cos + x * sin)
         };
+    }
+
+    checkCollisionAndFix(allMassObjects,) {
+        for(let i = 0; i<allMassObjects.length-1; i++) {
+            for(let j = i+1; j<allMassObjects.length; j++) {
+                this.checkCollision(allMassObjects[i], allMassObjects[j]);
+            } 
+        }
     }
 
     fixCollision(dx, dy, ball0, ball1, diff) {
@@ -38,12 +50,21 @@ export class CollisionHepler {
 
         //FIX OVERLAP
         if(pos0.y> pos1.y) {
-            pos0.y = pos0.y - Math.abs(diff)/2 - 1;
-            pos1.y = pos1.y + Math.abs(diff)/2 + 1;
+            pos0.y = pos0.y + Math.abs(diff)/2 + this.bias;
+            pos1.y = pos1.y - Math.abs(diff)/2 - this.bias;
         } else {
-            pos0.y = pos0.y + Math.abs(diff)/2 - 1;
-            pos1.y = pos1.y - Math.abs(diff)/2 + 1;
+            pos0.y = pos0.y - Math.abs(diff)/2 - this.bias;
+            pos1.y = pos1.y + Math.abs(diff)/2 + this.bias;
         }
+
+        if(pos0.x> pos1.x) {
+            pos0.x = pos0.x + Math.abs(diff)/2 + this.bias;
+            pos1.x = pos1.x - Math.abs(diff)/2 + this.bias;
+        } else {
+            pos0.x = pos0.x - Math.abs(diff)/2 + this.bias;
+            pos1.x = pos1.x + Math.abs(diff)/2 + this.bias;
+        }
+        
         //update position
         pos0.x += vel0.x;
         pos1.x += vel1.x;
@@ -100,12 +121,20 @@ export class CollisionHepler {
             vel1.x = -vel1.x;
 
         //FIX OVERLAP
-        if(pos0.y> pos1.y) {
-            pos0.y = pos0.y - Math.abs(diff) - 1;
-            pos1.y = pos1.y + Math.abs(diff) + 1;
+        if(pos0.y > pos1.y) {
+            pos0.y = pos0.y + Math.abs(diff) + 2 * this.bias;
+            pos1.y = pos1.y - Math.abs(diff) - 2 * this.bias;
         } else {
-            pos0.y = pos0.y + Math.abs(diff) - 1;
-            pos1.y = pos1.y - Math.abs(diff) + 1;
+            pos0.y = pos0.y - Math.abs(diff) - 2 * this.bias;
+            pos1.y = pos1.y + Math.abs(diff) + 2 * this.bias;
+        }
+
+        if(pos0.x > pos1.x) {
+            pos0.x = pos0.x + Math.abs(diff) + 2 * this.bias;
+            pos1.x = pos1.x - Math.abs(diff) - 2 * this.bias;
+        } else {
+            pos0.x = pos0.x - Math.abs(diff) - 2 * this.bias;
+            pos1.x = pos1.x + Math.abs(diff) + 2 * this.bias;
         }
 
         //update position
