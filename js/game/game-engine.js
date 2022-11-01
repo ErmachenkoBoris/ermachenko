@@ -49,6 +49,22 @@ const player = new Player(
   }
 );
 
+const infoPlayer = new Player(
+    {
+      x: 3 * gameObjectHandler.getDefaultPlayerSize(),
+      y: yStart * 2 - 3* gameObjectHandler.getDefaultPlayerSize(),
+      radious: 2*gameObjectHandler.getDefaultPlayerSize(),
+      ctx: ctx,
+      permanent: true,
+      image: 'assets/img/my-circle-photo.png',
+    },
+    {
+      draw: drawFunc,
+      update: updateFunc,
+      collisionBorderBehavior: checkIfInsideBodrdersAndCorrectPosition,
+    }
+  );
+
 let projectilesArr = [];
 let allMassObjects = [];
 const enemiesArr = [];
@@ -125,7 +141,7 @@ window.addEventListener(gameObjectHandler.getActionType(), (event) => {
 });
 
 const animateFunctionBody = () => {
-  allMassObjects = [...enemiesArr, player];
+  allMassObjects = [...enemiesArr, player, infoPlayer];
   requestAnimationFrame(animate);
 
   if(gameObjectHandler.getBackgroundImage()) {
@@ -144,6 +160,8 @@ const animateFunctionBody = () => {
   gameObjectHandler.update(enemiesArr);
 
   gameObjectHandler.update([player]);
+
+  gameObjectHandler.update([infoPlayer]);
 };
 
 function animate() {

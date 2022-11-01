@@ -42,6 +42,7 @@ export class Enemy {
     this.baseHealth = 8;
     this.health = health || this.baseHealth;
     this.particleArr = [];
+    this.page = itemLink.page;
 
     this._drawInner = draw;
     this._update = update;
@@ -230,7 +231,7 @@ export class Enemy {
                 radious: getRandomInt(2, 8),
                 color: this.color,
                 ctx: this.ctx,
-                velosity: {x: getRandomInt(1, 5) * getRandomFloat(-1, 1), y: getRandomInt(1, 5) * getRandomFloat(-1, 1)},
+                velosity: {x: getRandomInt(4, 7) * getRandomFloat(-1, 1), y: getRandomInt(1, 5) * getRandomFloat(-1, 1)},
                 speedScore: this.speedScore,
               },
               { draw: this._drawInner, update: this._update }
@@ -266,6 +267,7 @@ export class Particle {
         this._update = update;
         this.alpha = 1;
         this.alphaDelta = 0.005;
+        this.friction = 0.98;
     }
 
     draw() {
@@ -285,6 +287,11 @@ export class Particle {
         } else {
             this.alpha-=this.alphaDelta;
         }
+
+        // slow effect
+        this.velosity.x *=this.friction;
+        this.velosity.y *=this.friction;
+
         this.draw();
       }
 }

@@ -5,25 +5,29 @@ const desktopMenuItems = [
         name: 'Contacts',
         color: '#C31F81',
         style: 'bold 50px Arial',
-        image: 'assets/img/game-contacts.svg'
+        image: 'assets/img/game-contacts.svg',
+        page: 'pages/contacts/contacts.html'
     },
     {
         name: 'Portfolio',
         color: '#008282',
         style: 'bold 50px Arial',
-        image: 'assets/img/game-portfolio.svg'
+        image: 'assets/img/game-portfolio.svg',
+        page: 'pages/portfolio/portfolio.html'
     },
     {
         name: 'Blog',
         color: '#FE5233',
         style: 'bold 14px Arial',
-        image: 'assets/img/game-blog.svg'
+        image: 'assets/img/game-blog.svg',
+        page: 'pages/blog/blog.html'
     },
     {
         name: 'CV',
         color: '#CADCFF',
         style: 'bold 10px Arial',
-        image: 'assets/img/game-cv.svg'
+        image: 'assets/img/game-cv.svg',
+        page: 'pages/cv/cv.html'
     },
 ];
 
