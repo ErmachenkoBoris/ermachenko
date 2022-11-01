@@ -3,25 +3,25 @@
 const desktopMenuItems = [
     {
         name: 'Contacts',
-        color: 'gray',
+        color: '#C31F81',
         style: 'bold 50px Arial',
         image: 'assets/img/game-contacts.svg'
     },
     {
         name: 'Portfolio',
-        color: 'green',
+        color: '#008282',
         style: 'bold 50px Arial',
         image: 'assets/img/game-portfolio.svg'
     },
     {
         name: 'Blog',
-        color: 'orange',
+        color: '#FE5233',
         style: 'bold 14px Arial',
         image: 'assets/img/game-blog.svg'
     },
     {
         name: 'CV',
-        color: 'blue',
+        color: '#CADCFF',
         style: 'bold 10px Arial',
         image: 'assets/img/game-cv.svg'
     },

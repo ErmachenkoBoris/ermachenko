@@ -2,7 +2,7 @@ export class CollisionBulletHepler {
 
   fixCollision(enemy, enemies, projectile, enemyIndex, projectileIndex) {
     projectile.splice(projectileIndex, 1);
-    enemy.health--;
+    enemy.damaged();
     if (enemy.health <= 0) {
       enemies.splice(enemyIndex, 1);
     }

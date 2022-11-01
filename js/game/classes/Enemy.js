@@ -4,6 +4,10 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+const getRandomFloat = (min, max) => {
+    return Math.random() * (max - min + 1) + min;
+  };
+
 export class Enemy {
   constructor(
     {
@@ -37,12 +41,14 @@ export class Enemy {
     this.mass = radious * radious;
     this.baseHealth = 8;
     this.health = health || this.baseHealth;
+    this.particleArr = [];
 
     this._drawInner = draw;
     this._update = update;
     this._interval = null;
     this._healthColor = 'white';
     this._healthBorder = 'red';
+    this._particleHitCount = 20;
 
     this._generateRandomStartPositionInArea();
     this._setRandomAngle();
@@ -116,12 +122,12 @@ export class Enemy {
       Math.PI * 2 * (this.health / this.baseHealth),
     );
     this.ctx.fillStyle = this._healthColor;
-    // this.ctx.strokeStyle = this._healthBorder;
-    // this.ctx.stroke();
     this.ctx.fill();
   }
 
   update() {
+    this.particleArr.forEach(particle => particle.update());
+
     if (this.RANDOM_DIRECTION_MODE) {
       this._addRandomModeBehavior();
     }
@@ -213,4 +219,72 @@ export class Enemy {
     tmpImage.src = src;
     return tmpImage;
   }
+
+  damaged() {
+    this.health--;
+    for(let i=0;i < this._particleHitCount; i++) {
+        this.particleArr.push(new Particle(
+            {
+                x: this.x,
+                y: this.y,
+                radious: getRandomInt(2, 8),
+                color: this.color,
+                ctx: this.ctx,
+                velosity: {x: getRandomInt(1, 5) * getRandomFloat(-1, 1), y: getRandomInt(1, 5) * getRandomFloat(-1, 1)},
+                speedScore: this.speedScore,
+              },
+              { draw: this._drawInner, update: this._update }
+        ));
+    }
+  }
+}
+
+
+export class Particle {
+    constructor(
+      {
+        x,
+        y,
+        radious,
+        color,
+        ctx,
+        velosity,
+        speedScore,
+      },
+      { draw, update }
+    ) {
+        this.x = x;
+        this.y = y;
+    
+        this.radious = radious;
+        this.color = color;
+        this.ctx = ctx;
+        this.velosity = velosity;
+        this.speedScore = speedScore || 1;
+    
+        this._drawInner = draw;
+        this._update = update;
+        this.alpha = 1;
+        this.alphaDelta = 0.005;
+    }
+
+    draw() {
+        this.ctx.save();
+        this.ctx.globalAlpha = this.alpha;
+        this.ctx.beginPath();
+        this.ctx.arc(this.x, this.y, this.radious, 0, Math.PI * 2, false);
+        this.ctx.fillStyle = this.color;
+        this.ctx.fill();
+        this.ctx.restore();
+      }
+        
+      update() {
+        this._update(this);
+        if(this.alpha - this.alphaDelta < 0) {
+            this.alpha = 0;
+        } else {
+            this.alpha-=this.alphaDelta;
+        }
+        this.draw();
+      }
 }
