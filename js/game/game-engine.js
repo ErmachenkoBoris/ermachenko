@@ -4,17 +4,24 @@ import { Enemy } from "./classes/Enemy.js";
 import { CollisionHepler } from "./classes/CollisionHelper.js";
 import drowFunc from "./functions/drawsFunctions/commonPlayerDrows.js";
 import updateFunc from "./functions/updateFunctions/commonUpdate.js";
-import menuItems from "./consts/menuItems.js";
 import createAreas from "./utils/createAreas.js";
 import checkIfInsideBodrdersAndCorrectPosition from "./functions/collisionBordersHandler/collisionBordersHandler.js";
-import speedModes from "./consts/speedMods.js";
-import radiousModes from "./consts/radiousSizeMode.js";
 import { CollisionBulletHepler } from "./classes/CollisionBulletHelper.js";
 import { GameObjectHandler } from "./classes/GameObjectsHandler.js";
 import { isMobileOrTabler } from "./utils/getDeviceType.js";
+import { DesktopSettings } from "./classes/DesktopSettings.js"
+import { MobileSettings } from "./classes/MobileSettings.js"
 
-const FPS = 120;
+
 let isMobileOrTablerValue = isMobileOrTabler()
+let projectSettings;
+if (isMobileOrTablerValue) {
+    projectSettings = new MobileSettings();
+} else {
+    projectSettings = new DesktopSettings();
+}
+const gameObjectHandler = new GameObjectHandler(projectSettings);
+
 const MAX_PROJECTILE_LENGTH = 50;
 const CLEAR_PROJECTILE_TIMER = 5000;
 const canvas = document.querySelector("canvas");
@@ -25,14 +32,15 @@ const ctx = canvas.getContext("2d");
 const drawFunc = drowFunc;
 const xStart = canvas.width / 2;
 const yStart = canvas.height / 2;
+
 const player = new Player(
   {
     x: xStart,
     y: yStart,
-    radious: isMobileOrTablerValue ? 15 : 30,
+    radious: gameObjectHandler.getDefaultPlayerSize(),
     ctx: ctx,
     permanent: true,
-    image: "assets/img/blaster-v2.svg",
+    image: gameObjectHandler.getImageForPlayer(),
   },
   {
     draw: drawFunc,
@@ -47,28 +55,20 @@ const enemiesArr = [];
 
 const collisionHelper = new CollisionHepler();
 const collisionBulletHepler = new CollisionBulletHepler();
-const gameObjectHandler = new GameObjectHandler();
 
 function spawnEnemies() {
-  let itemsLocal = menuItems;
-  itemsLocal = createAreas(menuItems, canvas);
+  let itemsLocal = gameObjectHandler.getMenuItems();
+  itemsLocal = createAreas(itemsLocal, canvas);
   itemsLocal.forEach((item) => {
     enemiesArr.push(
       new Enemy(
         {
-          radious: isMobileOrTablerValue
-            ? radiousModes.generateSmall()
-            : radiousModes.generateBig(),
+          radious: gameObjectHandler.getSizeForEnemy(),
           color: item.color,
           ctx: ctx,
-          velosity: {
-            x: 1,
-            y: 1,
-          },
+          velosity: gameObjectHandler.getDefaultEnemyVelocity(),
           itemLink: item,
-          speedScore: isMobileOrTablerValue
-            ? speedModes.generateMiddle()
-            : speedModes.generateFast(),
+          speedScore: gameObjectHandler.getSpeedForEnemy(),
         },
         {
           draw: drawFunc,
@@ -78,6 +78,7 @@ function spawnEnemies() {
       )
     );
   });
+
 }
 
 spawnEnemies();
@@ -93,11 +94,9 @@ setInterval(() => {
 
 let timeOutId;
 let imageBackground = new Image();
-imageBackground.src = "assets/img/space-background1.jpg";
+imageBackground.src = gameObjectHandler.getBackgroundImage();
 
-const hendlerType = isMobileOrTablerValue ? "pointerdown" : "mousemove";
-
-window.addEventListener(hendlerType, (event) => {
+window.addEventListener(gameObjectHandler.getActionType(), (event) => {
   player.setRotateImageAngle(event);
   if (timeOutId) {
     clearTimeout(timeOutId);
@@ -107,14 +106,11 @@ window.addEventListener(hendlerType, (event) => {
       {
         x: player.x,
         y: player.y,
-        radious: 5,
-        color: "white",
+        radious: gameObjectHandler.getDefaultProjectyleSize(),
+        color: gameObjectHandler.getColorForProjectile(),
         ctx: ctx,
-        velosity: {
-          x: 1,
-          y: 1,
-        },
-        speedScore: 3,
+        velosity: gameObjectHandler.getDefaultProjectyleVelocity(),
+        speedScoreCoeff: gameObjectHandler.getDefaultProjectyleSpeedScoreCoeff(),
       },
       { draw: drawFunc, update: updateFunc }
     );
@@ -130,9 +126,11 @@ const animateFunctionBody = () => {
   allMassObjects = [...enemiesArr, player];
   requestAnimationFrame(animate);
 
-  ctx.drawImage(imageBackground, 0, 0, canvas.width, canvas.height);
+  if(gameObjectHandler.getBackgroundImage()) {
+    ctx.drawImage(imageBackground, 0, 0, canvas.width, canvas.height);
+  }
 
-  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+  ctx.fillStyle = gameObjectHandler.getBackgroundColor();
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   collisionBulletHepler.checkCollisionAndFix(enemiesArr, projectilesArr);
@@ -147,14 +145,7 @@ const animateFunctionBody = () => {
 };
 
 function animate() {
-  if (isMobileOrTablerValue) {
-    setTimeout(() => {
-      animateFunctionBody();
-    }, 1000 / FPS);
-    return;
-  }
-
-  animateFunctionBody();
+  gameObjectHandler.animateBehavior(animateFunctionBody);
 }
 
 animate();
