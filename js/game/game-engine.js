@@ -117,7 +117,9 @@ window.addEventListener(gameObjectHandler.getActionType(), (event) => {
     projectile.setAngle(event, { x: player.x, y: player.y });
     projectilesArr.push(projectile);
     clearTimeout(timeOutId);
-    timeOutId = setTimeout(updateProjectileAndPlayer, 600);
+    if(!isMobileOrTablerValue) {
+        timeOutId = setTimeout(updateProjectileAndPlayer, 600);
+    }
   };
   timeOutId = setTimeout(updateProjectileAndPlayer, 100);
 });
