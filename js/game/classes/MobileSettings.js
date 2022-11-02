@@ -12,7 +12,7 @@ const mobileMenuItems = [
         color: '#008282',
         style: 'bold 50px Arial',
         image: 'assets/img/game-portfolio-mobile.svg',
-        page: 'portfolio.html'
+        page: 'pages/portfolio/'
     },
     {
         name: 'Blog',

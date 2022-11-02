@@ -13,7 +13,7 @@ const desktopMenuItems = [
         color: '#008282',
         style: 'bold 50px Arial',
         image: 'assets/img/game-portfolio.svg',
-        page: 'portfolio.html'
+        page: 'pages/portfolio/index.html'
     },
     {
         name: 'Blog',
