@@ -3,7 +3,6 @@ export class CollisionBulletHepler {
     projectile.splice(projectileIndex, 1);
     enemy.damaged();
     if (enemy.health <= 0) {
-        console.log('window.location.href', window.location.href);
       window.location.href =`${window.location.href}${enemy.page}`;
       enemies.splice(enemyIndex, 1);
     }

@@ -68,6 +68,14 @@ body {
     background-color: rgb(192, 175, 175);
 }
 
+.game-info-button {
+    display: none;
+    position: fixed;
+    width: 40px;
+    bottom: 20px;
+    left: 20px;
+}
+
 @media screen and (min-width: 600px) {  
     .game-info {
         position: fixed;

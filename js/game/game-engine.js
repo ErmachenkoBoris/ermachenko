@@ -113,11 +113,17 @@ imageBackground.src = gameObjectHandler.getBackgroundImage();
 
 let pressed = false;
 
-window.addEventListener("keypress", () => activateAnimation());
+window.addEventListener("keypress", () => {
+    activateAnimation()});
 
 const activateButton = document.getElementById("game-info__button");
 activateButton.addEventListener("click", () => {
   setTimeout(() => activateAnimation(), 0);
+});
+
+const infoButton = document.getElementById("game-info-button");
+infoButton.addEventListener("click", () => {
+  setTimeout(() => turnOffGame(), 0);
 });
 
 const activateAnimation = () => {
@@ -147,18 +153,40 @@ const activateAnimation = () => {
       projectilesArr.push(projectile);
     }
   });
-
-  const infoBlock = document.getElementById("game-info");
-  infoBlock.style = "display: none;";
-
+  turnOnGame();
   animateLoop();
 };
+
+const turnOnGame = () => {
+    const infoButton = document.getElementById("game-info-button");
+    infoButton.style = "display: block;";
+
+    const infoBlock = document.getElementById("game-info");
+    infoBlock.style = "display: none;";
+    stoped = false;
+}
+
+const turnOffGame = () => {
+    const infoButton = document.getElementById("game-info-button");
+    infoButton.style = "display: none;";
+
+    const infoBlock = document.getElementById("game-info");
+    infoBlock.style = "display: bkock;";
+    projectilesArr = [];
+    stoped = true;
+}
 
 const animateLoop = () => {
   gameObjectHandler.animateBehavior(animateFunctionBody);
 };
 
+let stoped = true;
+
 const animateFunctionBody = () => {
+    if(stoped) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
   allMassObjects = [...enemiesArr, player];
   requestAnimationFrame(animateLoop);
 

@@ -6,28 +6,28 @@ const desktopMenuItems = [
         color: '#C31F81',
         style: 'bold 50px Arial',
         image: 'assets/img/game-contacts.svg',
-        page: 'pages/contacts/contacts.html'
+        page: 'pages/contacts/'
     },
     {
         name: 'Portfolio',
         color: '#008282',
         style: 'bold 50px Arial',
         image: 'assets/img/game-portfolio.svg',
-        page: 'pages/portfolio/index.html'
+        page: 'pages/portfolio/'
     },
     {
         name: 'Blog',
         color: '#FE5233',
         style: 'bold 14px Arial',
         image: 'assets/img/game-blog.svg',
-        page: 'pages/blog/blog.html'
+        page: 'pages/blog/'
     },
     {
         name: 'CV',
         color: '#CADCFF',
         style: 'bold 10px Arial',
         image: 'assets/img/game-cv.svg',
-        page: 'pages/cv/cv.html'
+        page: 'pages/cv/'
     },
 ];
 

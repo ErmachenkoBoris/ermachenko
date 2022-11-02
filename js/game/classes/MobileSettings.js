@@ -5,7 +5,8 @@ const mobileMenuItems = [
         name: 'Contacts',
         color: '#C31F81',
         style: 'bold 50px Arial',
-        image: 'assets/img/game-contacts-mobile.svg'
+        image: 'assets/img/game-contacts-mobile.svg',
+        page: 'pages/contacts/'
     },
     {
         name: 'Portfolio',
@@ -19,13 +20,14 @@ const mobileMenuItems = [
         color: '#FE5233',
         style: 'bold 14px Arial',
         image: 'assets/img/game-blog-mobile.svg',
-        page: 'pages/blog/blog.html'
+        page: 'pages/blog/'
     },
     {
         name: 'CV',
         color: '#CADCFF',
         style: 'bold 10px Arial',
-        image: 'assets/img/game-cv-mobile.svg'
+        image: 'assets/img/game-cv-mobile.svg',
+        page: 'pages/cv/'
     },
 ];
 
