@@ -1,14 +1,15 @@
 body {
+    font-family: 'Courier New', monospace;
+
     overflow: hidden;
     background-image: url('../assets/img/space-background1.jpg');
 }
 
 .game-info {
     position: fixed;
-    height: 300px;
-    width: 250px;
-    top: calc((100vh - 300px)/2);
-    left: calc((100vw - 250px)/2);
+    width: 80vw;
+    top: 30vh;
+    left: 10vw;
     background-color: rgb(192, 175, 175);
     padding: 20px;
     border-radius: 15px;
@@ -26,20 +27,86 @@ body {
 }
 
 .game-info__text {
-    font-family: 'Courier New', monospace;
     font-weight: 700;
-
-    margin-left: 120px;
-
-    font-size: 20px;
+    font-size: 24px;
+    line-height: 25px;
 }
 
 .game-info__photo {
     position: absolute;
-    width: 125px;
-    top: -8%;
-    left: -8%;
+    width: 150px;
+    top: -30px;
+    left: -30px;
     border: 15px solid rgb(192, 175, 175);
     border-radius: 50%;
     background: white;
+}
+
+.game-info__background-image {
+    width: 120px;
+    height: 100px;
+    float: left;
+}
+
+.game-info__button {
+    margin-top: 25px;
+
+    display: none;
+    font-weight: bold;
+    background-color: white;
+    border-radius: 15px;
+    border: none;
+    padding: 5px;
+    font-size: 25px;
+
+    box-shadow: black 15px 20px 30px -10px;
+
+}
+
+.game-info__button:hover {
+    cursor: pointer;
+    background-color: rgb(192, 175, 175);
+}
+
+@media screen and (min-width: 600px) {  
+    .game-info {
+        position: fixed;
+        height: 330px;
+        width: 320px;
+        top: calc((100vh - 330px)/2);
+        left: calc((100vw - 320px)/2);
+        background-color: rgb(192, 175, 175);
+        padding: 20px;
+        border-radius: 15px;
+    
+    
+        box-shadow: black 15px 20px 30px -10px;
+    }
+
+    .game-info__photo {
+        position: absolute;
+        width: 125px;
+        top: -8%;
+        left: -8%;
+        border: 15px solid rgb(192, 175, 175);
+        border-radius: 50%;
+        background: white;
+    }
+
+    .game-info__text {
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 25px;
+    }
+
+    .game-info__button {
+        margin-top: none;
+    
+    }
+
+    .game-info__background-image {
+        width: 80px;
+        height: 100px;
+        float: left;
+    }
 }

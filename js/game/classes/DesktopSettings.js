@@ -13,7 +13,7 @@ const desktopMenuItems = [
         color: '#008282',
         style: 'bold 50px Arial',
         image: 'assets/img/game-portfolio.svg',
-        page: 'pages/portfolio/portfolio.html'
+        page: 'portfolio.html'
     },
     {
         name: 'Blog',
@@ -69,10 +69,10 @@ const DesktopSettingsConstValue = {
   generateSizeForEnemy: () => radiousModes.generateBig(),
   generateSpeedForEnemy: () => speedModes.generateMiddle(),
   backgroundImage: "assets/img/space-background1.jpg",
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  backgroundColor: "rgba(0, 0, 0, 0.1)",
   colorForProjectile: "white",
   enemyImages: [],
-  hendlerType: "mousemove",
+  hendlerType: "click",
   defaultPlayerVelocity: {
     x: 1,
     y: 1,

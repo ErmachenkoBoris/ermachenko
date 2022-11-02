@@ -1,2 +1,6 @@
 @import "./normalize.css";
 @import "./game.css";
+
+* {
+    box-sizing: border-box;
+}

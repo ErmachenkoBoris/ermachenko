@@ -11,13 +11,15 @@ const mobileMenuItems = [
         name: 'Portfolio',
         color: '#008282',
         style: 'bold 50px Arial',
-        image: 'assets/img/game-portfolio-mobile.svg'
+        image: 'assets/img/game-portfolio-mobile.svg',
+        page: 'portfolio.html'
     },
     {
         name: 'Blog',
         color: '#FE5233',
         style: 'bold 14px Arial',
-        image: 'assets/img/game-blog-mobile.svg'
+        image: 'assets/img/game-blog-mobile.svg',
+        page: 'pages/blog/blog.html'
     },
     {
         name: 'CV',

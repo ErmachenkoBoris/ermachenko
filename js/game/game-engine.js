@@ -9,16 +9,17 @@ import checkIfInsideBodrdersAndCorrectPosition from "./functions/collisionBorder
 import { CollisionBulletHepler } from "./classes/CollisionBulletHelper.js";
 import { GameObjectHandler } from "./classes/GameObjectsHandler.js";
 import { isMobileOrTabler } from "./utils/getDeviceType.js";
-import { DesktopSettings } from "./classes/DesktopSettings.js"
-import { MobileSettings } from "./classes/MobileSettings.js"
-import typeTextAnimation from "./utils/typeTextAnimation.js"
+import { DesktopSettings } from "./classes/DesktopSettings.js";
+import { MobileSettings } from "./classes/MobileSettings.js";
+import typeTextAnimation from "./utils/typeTextAnimation.js";
+import WELCOME_TEXT from "./consts/welcome-text.js";
 
-let isMobileOrTablerValue = isMobileOrTabler()
+let isMobileOrTablerValue = isMobileOrTabler();
 let projectSettings;
 if (isMobileOrTablerValue) {
-    projectSettings = new MobileSettings();
+  projectSettings = new MobileSettings();
 } else {
-    projectSettings = new DesktopSettings();
+  projectSettings = new DesktopSettings();
 }
 const gameObjectHandler = new GameObjectHandler(projectSettings);
 
@@ -49,21 +50,21 @@ const player = new Player(
   }
 );
 
-const infoPlayer = new Player(
-    {
-      x: 3 * gameObjectHandler.getDefaultPlayerSize(),
-      y: yStart * 2 - 3* gameObjectHandler.getDefaultPlayerSize(),
-      radious: 2*gameObjectHandler.getDefaultPlayerSize(),
-      ctx: ctx,
-      permanent: true,
-      image: 'assets/img/my-circle-photo.png',
-    },
-    {
-      draw: drawFunc,
-      update: updateFunc,
-      collisionBorderBehavior: checkIfInsideBodrdersAndCorrectPosition,
-    }
-  );
+// const infoPlayer = new Player(
+//   {
+//     x: 3 * gameObjectHandler.getDefaultPlayerSize(),
+//     y: yStart * 2 - 3 * gameObjectHandler.getDefaultPlayerSize(),
+//     radious: 2 * gameObjectHandler.getDefaultPlayerSize(),
+//     ctx: ctx,
+//     permanent: true,
+//     image: "assets/img/my-circle-photo.png",
+//   },
+//   {
+//     draw: drawFunc,
+//     update: updateFunc,
+//     collisionBorderBehavior: checkIfInsideBodrdersAndCorrectPosition,
+//   }
+// );
 
 let projectilesArr = [];
 let allMassObjects = [];
@@ -94,7 +95,6 @@ function spawnEnemies() {
       )
     );
   });
-
 }
 
 spawnEnemies();
@@ -108,43 +108,61 @@ setInterval(() => {
   }
 }, CLEAR_PROJECTILE_TIMER);
 
-let timeOutId;
 let imageBackground = new Image();
 imageBackground.src = gameObjectHandler.getBackgroundImage();
 
-window.addEventListener(gameObjectHandler.getActionType(), (event) => {
-  player.setRotateImageAngle(event);
-  if (timeOutId) {
-    clearTimeout(timeOutId);
-  }
-  const updateProjectileAndPlayer = () => {
-    const projectile = new Projectile(
-      {
-        x: player.x,
-        y: player.y,
-        radious: gameObjectHandler.getDefaultProjectyleSize(),
-        color: gameObjectHandler.getColorForProjectile(),
-        ctx: ctx,
-        velosity: gameObjectHandler.getDefaultProjectyleVelocity(),
-        speedScoreCoeff: gameObjectHandler.getDefaultProjectyleSpeedScoreCoeff(),
-      },
-      { draw: drawFunc, update: updateFunc }
-    );
-    projectile.setAngle(event, { x: player.x, y: player.y });
-    projectilesArr.push(projectile);
-    clearTimeout(timeOutId);
-    if(!isMobileOrTablerValue) {
-        timeOutId = setTimeout(updateProjectileAndPlayer, 600);
-    }
-  };
-  timeOutId = setTimeout(updateProjectileAndPlayer, 100);
+let pressed = false;
+
+window.addEventListener("keypress", () => activateAnimation());
+
+const activateButton = document.getElementById("game-info__button");
+activateButton.addEventListener("click", () => {
+  setTimeout(() => activateAnimation(), 0);
 });
 
-const animateFunctionBody = () => {
-  allMassObjects = [...enemiesArr, player, infoPlayer];
-  requestAnimationFrame(animate);
+const activateAnimation = () => {
+  window.addEventListener("mousemove", (event) => {
+    player.setRotateImageAngle(event);
+  });
 
-  if(gameObjectHandler.getBackgroundImage()) {
+  window.addEventListener(gameObjectHandler.getActionType(), (event) => {
+    player.setRotateImageAngle(event);
+    if (!pressed) {
+      pressed = true;
+      setTimeout(() => (pressed = false), 300);
+      const projectile = new Projectile(
+        {
+          x: player.x,
+          y: player.y,
+          radious: gameObjectHandler.getDefaultProjectyleSize(),
+          color: gameObjectHandler.getColorForProjectile(),
+          ctx: ctx,
+          velosity: gameObjectHandler.getDefaultProjectyleVelocity(),
+          speedScoreCoeff:
+            gameObjectHandler.getDefaultProjectyleSpeedScoreCoeff(),
+        },
+        { draw: drawFunc, update: updateFunc }
+      );
+      projectile.setAngle(event, { x: player.x, y: player.y });
+      projectilesArr.push(projectile);
+    }
+  });
+
+  const infoBlock = document.getElementById("game-info");
+  infoBlock.style = "display: none;";
+
+  animateLoop();
+};
+
+const animateLoop = () => {
+  gameObjectHandler.animateBehavior(animateFunctionBody);
+};
+
+const animateFunctionBody = () => {
+  allMassObjects = [...enemiesArr, player];
+  requestAnimationFrame(animateLoop);
+
+  if (gameObjectHandler.getBackgroundImage()) {
     ctx.drawImage(imageBackground, 0, 0, canvas.width, canvas.height);
   }
 
@@ -161,26 +179,9 @@ const animateFunctionBody = () => {
 
   gameObjectHandler.update([player]);
 
-//   gameObjectHandler.update([infoPlayer]);
+  //   gameObjectHandler.update([infoPlayer]);
 };
 
-function animate() {
-  gameObjectHandler.animateBehavior(animateFunctionBody);
-}
-
-let gameProcess = false;
-const activateAnimation = () => {
-    const infoBlock = document.getElementById('game-info');
-
-    if(!gameProcess) {
-        infoBlock.style = "display: none;";
-        setTimeout(()=>animate(), 100);
-    }
-}
-
-const activateButton = document.getElementById('game-info__button');
-activateButton.addEventListener('click', () => {
-    activateAnimation()
+typeTextAnimation("game-info__text", WELCOME_TEXT, () => {
+  activateButton.style.display = "inline-block";
 });
-
-typeTextAnimation('game-info__text', 'Hi, I`m Boris. This is my beutiful website')
