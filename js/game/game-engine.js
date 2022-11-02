@@ -11,7 +11,7 @@ import { GameObjectHandler } from "./classes/GameObjectsHandler.js";
 import { isMobileOrTabler } from "./utils/getDeviceType.js";
 import { DesktopSettings } from "./classes/DesktopSettings.js"
 import { MobileSettings } from "./classes/MobileSettings.js"
-
+import typeTextAnimation from "./utils/typeTextAnimation.js"
 
 let isMobileOrTablerValue = isMobileOrTabler()
 let projectSettings;
@@ -161,11 +161,26 @@ const animateFunctionBody = () => {
 
   gameObjectHandler.update([player]);
 
-  gameObjectHandler.update([infoPlayer]);
+//   gameObjectHandler.update([infoPlayer]);
 };
 
 function animate() {
   gameObjectHandler.animateBehavior(animateFunctionBody);
 }
 
-animate();
+let gameProcess = false;
+const activateAnimation = () => {
+    const infoBlock = document.getElementById('game-info');
+
+    if(!gameProcess) {
+        infoBlock.style = "display: none;";
+        setTimeout(()=>animate(), 100);
+    }
+}
+
+const activateButton = document.getElementById('game-info__button');
+activateButton.addEventListener('click', () => {
+    activateAnimation()
+});
+
+typeTextAnimation('game-info__text', 'Hi, I`m Boris. This is my beutiful website')

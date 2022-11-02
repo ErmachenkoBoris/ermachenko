@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ermachenko Boris</title>
-    <link rel="stylesheet" href="./styles/index.css">
-</head>
-<body>
-    <canvas>
-
-    </canvas>
+    <link rel="stylesheet" href="./styles/index.css" />
+  </head>
+  <body>
+    <div id="game-info" class="game-info">
+      <img
+        class="game-info__photo"
+        src="assets/img/my-circle-photo.png"
+        alt="Boris photo"
+      />
+      <div class="game-info__content">
+        <div id="game-info__text" class="game-info__text"></div>
+        <button id="game-info__button" class="game-info__button">Ok</button>
+      </div>
+    </div>
+    <canvas> </canvas>
     <script type="module" src="./js/game/game-engine.js"></script>
-</body>
+  </body>
 </html>
