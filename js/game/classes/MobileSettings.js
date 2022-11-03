@@ -68,7 +68,7 @@ const MobileSettingsConstValue = {
   imageForPlayer: "assets/img/game-blaster.svg",
   generateSizeForEnemy: () => radiousModes.generateNormal(),
   generateSpeedForEnemy: () => speedModes.generateMiddle(),
-  backgroundImage: null,
+  backgroundImage: "assets/img/space-background1-mobile.jpg",
   backgroundColor: "rgba(0, 0, 0, 0.1)",
   colorForProjectile: "white",
   enemyImages: [],

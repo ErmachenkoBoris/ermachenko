@@ -49,7 +49,7 @@ export class Enemy {
     this._interval = null;
     this._healthColor = 'white';
     this._healthBorder = 'red';
-    this._particleHitCount = 20;
+    this._particleHitCount = 30;
 
     this._generateRandomStartPositionInArea();
     this._setRandomAngle();
@@ -228,7 +228,7 @@ export class Enemy {
             {
                 x: this.x,
                 y: this.y,
-                radious: getRandomInt(2, 8),
+                radious: getRandomInt(4, 10),
                 color: this.color,
                 ctx: this.ctx,
                 velosity: {x: getRandomInt(4, 7) * getRandomFloat(-1, 1), y: getRandomInt(1, 5) * getRandomFloat(-1, 1)},

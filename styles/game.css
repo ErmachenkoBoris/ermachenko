@@ -8,7 +8,7 @@ body {
 .game-info {
     position: fixed;
     width: 80vw;
-    top: 30vh;
+    top: 20vh;
     left: 10vw;
     background-color: rgb(192, 175, 175);
     padding: 20px;

@@ -194,8 +194,8 @@ const animateFunctionBody = () => {
     ctx.drawImage(imageBackground, 0, 0, canvas.width, canvas.height);
   }
 
-  ctx.fillStyle = gameObjectHandler.getBackgroundColor();
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+//   ctx.fillStyle = gameObjectHandler.getBackgroundColor();
+//   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   collisionBulletHepler.checkCollisionAndFix(enemiesArr, projectilesArr);
 
